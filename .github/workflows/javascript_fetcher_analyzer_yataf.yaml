@@ -1,0 +1,107 @@
+name: 🏗️ Analyze JS Files (Yataf)
+# Alt: 
+#MAX_RUNTIME: 45-60 Mins ~ 1000 Hosts
+
+on:
+  workflow_dispatch: # Whenever manually run from actions-tab
+  schedule:
+    - cron: "25 03 * * *" #( 03:25 AM UTC --> 09:10 AM Morning )
+#------------------------------------------------------------------------------------#  
+env:
+  # DO NOT MODIFY ANYTHING ELSE
+  INVENTORY_REPO_USER: "${{ secrets.INVENTORY_REPO_USER }}"
+  INVENTORY_REPO_TOKEN: "${{ secrets.INVENTORY_REPO_TOKEN }}"
+#------------------------------------------------------------------------------------#
+jobs:
+  Analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 69696969696969  
+    permissions:
+      contents: write
+      
+    steps:        
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          path: main  
+
+      - name: Install Coreutils
+        run: |
+          # Presets
+          set -x ; set +e
+          #--------------#
+          sudo apt update -y
+          sudo apt install coreutils curl dos2unix fdupes jq moreutils wget -y
+          npm -g install js-beautify
+          pip install ansi2txt
+          # Do again, sometimes fails
+          sudo apt install coreutils curl fdupes dos2unix jq moreutils wget -y
+          npm -g install js-beautify
+          pip install ansi2txt
+          # For TG BOT Notifs
+          pip install apprise 
+          pip install apprise 2>/dev/null
+          # For neofetch
+          pip install archey4
+          pip install archey4 2>/dev/null
+        continue-on-error: true
+      
+      # Chrome is preinstalled
+      # - name: Install Chrome
+      #   run: |
+      #     # Presets
+      #     set -x ; set +e
+      #     #--------------#
+      #     wget "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb" -O "/tmp/chrome.deb"
+      #     sudo apt install "/tmp/chrome.deb" -y
+      #     sudo apt update -y && sudo apt upgrade -y
+      #   continue-on-error: false
+
+      - name: Install eget
+        run: |
+          # Presets
+          set -x ; set +e
+          #--------------#
+          # eget for bins
+          sudo wget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/eget" -O "/usr/local/bin/eget"
+          sudo chmod +xwr "/usr/local/bin/eget"
+        continue-on-error: false
+
+      - name: Install Deps
+        run: |
+          # Presets
+          set -x ; set +e
+          #--------------#
+          #anew
+          sudo eget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/anew" --to "/usr/local/bin/anew" ; anew -h
+          #fget
+          sudo eget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/fget" --to "/usr/local/bin/fget" ; fget -h
+          #inscope
+          sudo eget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/inscope" --to "/usr/local/bin/inscope" ; inscope -h
+          #scopeview
+          sudo eget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/scopeview" --to "/usr/local/bin/scopeview" ; scopeview -h
+          #trufflehog
+          sudo eget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/trufflehog" --to "/usr/local/bin/trufflehog" ; trufflehog --help --no-update
+          #unfurl
+          sudo eget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/unfurl" --to "/usr/local/bin/unfurl" ; unfurl -h
+          #yataf
+          sudo eget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/yataf" --to "/usr/local/bin/yataf" ; yataf -h
+          #yq
+          sudo eget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/yq" --to "/usr/local/bin/yq" ; sudo chmod +xwr "/usr/local/bin/yq" ; yq -h
+        continue-on-error: true
+     
+      - name: Download & Run 
+        run: |
+          # Presets
+          set -x ; set +e
+          #--------------#
+          # Download
+          curl -qfsSL "https://$INVENTORY_REPO_USER:$INVENTORY_REPO_TOKEN@raw.githubusercontent.com/Azathothas/Inventory/main/.github/scripts/javascript_fetcher_analyzer_yataf.sh" -o "./javascript_fetcher_analyzer_yataf.sh"
+          # Dos2unix
+          dos2unix "./javascript_fetcher_analyzer_yataf.sh"
+          # chmod +xwr
+          sudo chmod +xwr "./javascript_fetcher_analyzer_yataf.sh"
+          # Run
+          # Always run with STD_OUT + STD_IN >/dev/null
+          bash "./javascript_fetcher_analyzer_yataf.sh" >/dev/null 2>&1
+        continue-on-error: true
