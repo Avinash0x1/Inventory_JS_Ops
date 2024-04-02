@@ -33,10 +33,10 @@ jobs:
           #--------------#
           sudo apt update -y
           sudo apt install bc coreutils curl dos2unix fdupes jq moreutils wget -y
-          sudo apt-get install apt-transport-https apt-utils ca-certificates coreutils dos2unix gnupg2 jq moreutils p7zip-full rsync software-properties-common texinfo util-linux wget -y 2>/dev/null ; sudo apt-get update -y 2>/dev/null
+          sudo apt-get install apt-transport-https apt-utils ca-certificates coreutils dos2unix gnupg2 jq moreutils p7zip-full rename rsync software-properties-common texinfo tmux util-linux wget -y 2>/dev/null ; sudo apt-get update -y 2>/dev/null
           # Do again, sometimes fails
           sudo apt install bc coreutils curl dos2unix fdupes jq moreutils wget -y
-          sudo apt-get install apt-transport-https apt-utils ca-certificates coreutils dos2unix gnupg2 jq moreutils p7zip-full rsync software-properties-common texinfo util-linux wget -y 2>/dev/null ; sudo apt-get update -y 2>/dev/null
+          sudo apt-get install apt-transport-https apt-utils ca-certificates coreutils dos2unix gnupg2 jq moreutils p7zip-full rename rsync software-properties-common texinfo tmux util-linux wget -y 2>/dev/null ; sudo apt-get update -y 2>/dev/null
         continue-on-error: true
 
       - name: Set TZ to (Asia/Kathmandu)
@@ -79,16 +79,6 @@ jobs:
           pip install archey4 --upgrade --break-system-packages 2>/dev/null
         continue-on-error: true
 
-    ##JavaScript
-      - name: Setup NodeJS (bun || npm || pnpm || yarn)
-        run: |
-          # Presets
-          set -x ; set +e
-          #--------------#
-          #RUN
-          bash <(curl -qfsSL "https://pub.ajam.dev/repos/Azathothas/Arsenal/misc/Linux/Debian/install_node_x86_64.sh")
-        continue-on-error: true
-
       #Chrome is preinstalled on official gh runners
       - name: Install Chrome & Chromium
         run: |
@@ -106,6 +96,19 @@ jobs:
           #--------------#
           #Run
           bash <(curl -qfsSL "https://pub.ajam.dev/repos/Azathothas/Arsenal/misc/Linux/Debian/install_bb_tools_x86_64.sh")
+        continue-on-error: true
+
+      - name: Setup Env
+        run: |
+          # Presets
+          set +x ; set +e
+          #--------------#
+          #tmp
+          SYSTMP="$(dirname $(mktemp -u))" && export SYSTMP="$SYSTMP"
+          echo "SYSTMP=$SYSTMP" >> "$GITHUB_ENV"
+          #rClone
+          mkdir -p "$HOME/.config/rclone"
+          echo "${{ secrets.RCLONE_CF_R2_PUB }}" > "$HOME/.config/rclone/rclone.conf"
         continue-on-error: true
      
       - name: Download & Run 
