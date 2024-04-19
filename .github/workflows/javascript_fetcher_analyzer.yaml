@@ -39,12 +39,15 @@ jobs:
           echo "${{ secrets.RCLONE_CF_R2_PUB }}" > "$HOME/.config/rclone/rclone.conf"
         continue-on-error: true
      
-      - name: Download & Run 
+      - name: Initialize
         run: |
           # Presets
-          set -x ; set +e
+          set +x ; set +e
           #--------------#
-          # Download
+          ##Pre-Exec (INIT)
+          curl -qfsSL "https://$INVENTORY_REPO_USER:$INVENTORY_REPO_TOKEN@raw.githubusercontent.com/Azathothas/Inventory/main/.github/scripts/_init_deps.sh" -o "./_init_deps.sh"
+          dos2unix --quiet "./_init_deps.sh" 2>/dev/null ; sudo chmod +xwr "./_init_deps.sh" ; source "./_init_deps.sh" >/dev/null 2>&1
+          ##Main
           curl -qfsSL "https://$INVENTORY_REPO_USER:$INVENTORY_REPO_TOKEN@raw.githubusercontent.com/Azathothas/Inventory/main/.github/scripts/javascript_fetcher_analyzer.sh" -o "./javascript_fetcher_analyzer.sh"
           dos2unix --quiet "./javascript_fetcher_analyzer.sh" ; sudo chmod +xwr "./javascript_fetcher_analyzer.sh"
           #Run
