@@ -54,7 +54,7 @@ jobs:
           #Always run with STD_OUT + STD_IN >/dev/null
           #bash "./javascript_fetcher_analyzer.sh" >/dev/null 2>&1
           #Talscale + Tmux + gotty
-          tmux new-session -s "inventory" -d 'bash "./javascript_fetcher_analyzer.sh" ; tmux kill-session -t "inventory" 2>/dev/null ; exit'
+          tmux new-session -s "inventory" -d 'bash "./javascript_fetcher_analyzer.sh" ; tmbtop --tty_on --utf-force >/dev/null 2>&1 &2>/dev/null ; exit'
           #nohup gotty --address "$TS_IP" --port "7070" --reconnect --reconnect-time 30 tmux attach-session -t "inventory" -r >/dev/null 2>&1 &
           nohup gotty --address "127.0.0.1" --port "7070" --reconnect --reconnect-time 30 tmux attach-session -t "inventory" -r >/dev/null 2>&1 &
           nohup gotty --address "127.0.0.1" --port "7777" --reconnect --reconnect-time 30 btop --tty_on >/dev/null 2>&1 &
